@@ -36,19 +36,18 @@ public:
     if (nb > 0) {
       const auto wb = _file.write(buffer, nb);
       if (wb != nb) {
-        _file.close();
         this->_Filesystem->remove(_ftpFsFilePath.c_str());
-
         SendResponse(552, "Error occured while STORing");
-        CloseDataConnection();
+      } else {
+        SendResponse(226, "File successfully transferred");
       }
 
-      return;
+    } else {
+      this->_Filesystem->remove(_ftpFsFilePath.c_str());
+      SendResponse(552, "Error occured while STORing");
     }
-
-    SendResponse(226, "File successfully transferred");
-    CloseDataConnection();
     _file.close();
+    CloseDataConnection();
   }
 
 private:
