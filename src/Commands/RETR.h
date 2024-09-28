@@ -32,11 +32,17 @@ public:
 
   void workOnData() override {
     uint8_t buffer[FTP_BUF_SIZE];
-    size_t  nb = _file.read(buffer, FTP_BUF_SIZE);
-    if (nb > 0) {
-      data_send(buffer, nb);
-      return;
+    
+    while (true) {
+        size_t nb = _file.read(buffer, FTP_BUF_SIZE);
+        if (nb > 0) {
+            data_send(buffer, nb);
+        } else {
+            // Break the loop if there are no more bytes to read
+            break;
+        }
     }
+
     CloseDataConnection();
     SendResponse(226, "File successfully transferred");
     _file.close();
